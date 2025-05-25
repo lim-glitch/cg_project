@@ -37,24 +37,40 @@ public class GrassRenderer implements GLEventListener {
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-        gl.glColor3f(0.0f, 0.6f, 0.0f); // grass color
-        gl.glBegin(GL2.GL_TRIANGLES);
+        drawGrassRow(gl, -0.6f, true);  // first row: big-small
+        drawGrassRow(gl, -0.8f, false); // second row: small-big
+    }
 
-        // first row of grass
-        for (float x = -1.0f; x < 1.0f; x += 0.1f) {
-            gl.glVertex2f(x, -0.6f);
-            gl.glVertex2f(x + 0.05f, -0.4f);
-            gl.glVertex2f(x + 0.1f, -0.6f);
+    // draw a row of grass with alternating big-small pattern
+    private void drawGrassRow(GL2 gl, float baseY, boolean startWithBig) {
+        float x = -1.0f;
+        int index = 0;
+
+        while (x < 1.0f) {
+            boolean isBig = (index % 2 == 0) == startWithBig;
+
+            float width = isBig ? 0.12f : 0.08f;
+            float height = isBig ? 0.22f : 0.15f;
+
+            // left triangle (dark)
+            gl.glColor3f(0.0f, 0.45f, 0.0f);
+            gl.glBegin(GL2.GL_TRIANGLES);
+            gl.glVertex2f(x, baseY);
+            gl.glVertex2f(x + width / 2, baseY + height);
+            gl.glVertex2f(x + width / 2, baseY);
+            gl.glEnd();
+
+            // right triangle (light)
+            gl.glColor3f(0.0f, 0.75f, 0.0f);
+            gl.glBegin(GL2.GL_TRIANGLES);
+            gl.glVertex2f(x + width / 2, baseY);
+            gl.glVertex2f(x + width, baseY);
+            gl.glVertex2f(x + width / 2, baseY + height);
+            gl.glEnd();
+
+            x += width + 0.01f;
+            index++;
         }
-
-        // second row of grass
-        for (float x = -1.0f; x < 1.0f; x += 0.1f) {
-            gl.glVertex2f(x, -0.8f);
-            gl.glVertex2f(x + 0.05f, -0.6f);
-            gl.glVertex2f(x + 0.1f, -0.8f);
-        }
-
-        gl.glEnd();
     }
 
     @Override
