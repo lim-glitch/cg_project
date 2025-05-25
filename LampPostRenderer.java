@@ -42,25 +42,48 @@ public class LampPostRenderer implements GLEventListener {
     }
 
     private void drawLamp(GL2 gl, float x) {
-        gl.glColor3f(0.1f, 0.1f, 0.1f); // lamp post color
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2f(x - 0.03f, -0.6f);
-        gl.glVertex2f(x + 0.03f, -0.6f);
-        gl.glVertex2f(x + 0.03f, 0.4f);
-        gl.glVertex2f(x - 0.03f, 0.4f);
-        gl.glEnd(); // draw post
+        float postWidth = 0.06f;
+        float halfW = postWidth / 2;
+        float baseY = -0.6f;
+        float topY = 0.4f;
 
-        gl.glColor3f(1.0f, 1.0f, 0.0f); // lamp head color
-        float cy = 0.45f, r = 0.07f;
+        // left side of post (dark gray)
+        gl.glColor3f(0.1f, 0.1f, 0.1f);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glVertex2f(x - halfW, baseY);
+        gl.glVertex2f(x, baseY);
+        gl.glVertex2f(x, topY);
+        gl.glVertex2f(x - halfW, topY);
+        gl.glEnd();
+
+        // right side of post (light gray)
+        gl.glColor3f(0.3f, 0.3f, 0.3f);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glVertex2f(x, baseY);
+        gl.glVertex2f(x + halfW, baseY);
+        gl.glVertex2f(x + halfW, topY);
+        gl.glVertex2f(x, topY);
+        gl.glEnd();
+
+        // outer lamp head (darker yellow)
+        drawCircle(gl, x, 0.45f, 0.08f, 1.0f, 0.85f, 0.1f);
+
+        // inner lamp head (bright yellow)
+        drawCircle(gl, x, 0.45f, 0.05f, 1.0f, 1.0f, 0.0f);
+    }
+
+    // draw filled circle with specified color
+    private void drawCircle(GL2 gl, float cx, float cy, float r, float red, float green, float blue) {
+        gl.glColor3f(red, green, blue);
         gl.glBegin(GL2.GL_TRIANGLE_FAN);
-        gl.glVertex2f(x, cy);
+        gl.glVertex2f(cx, cy);
         for (int i = 0; i <= 100; i++) {
             double angle = 2 * Math.PI * i / 100;
-            float px = (float)(x + r * Math.cos(angle));
+            float px = (float)(cx + r * Math.cos(angle));
             float py = (float)(cy + r * Math.sin(angle));
             gl.glVertex2f(px, py);
         }
-        gl.glEnd(); // draw head
+        gl.glEnd();
     }
 
     @Override
