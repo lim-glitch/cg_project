@@ -37,36 +37,44 @@ public class TreeRenderer implements GLEventListener {
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
-        drawTree(gl, -0.6f); // draw left tree
-        drawTree(gl, 0.6f);  // draw right tree
+        drawTree(gl, -0.6f); // left tree
+        drawTree(gl, 0.6f);  // right tree
     }
 
     private void drawTree(GL2 gl, float offsetX) {
+        // draw trunk
         gl.glColor3f(0.55f, 0.27f, 0.07f);
         gl.glBegin(GL2.GL_QUADS);
         gl.glVertex2f(offsetX - 0.05f, -0.6f);
         gl.glVertex2f(offsetX + 0.05f, -0.6f);
         gl.glVertex2f(offsetX + 0.05f, -0.2f);
         gl.glVertex2f(offsetX - 0.05f, -0.2f);
-        gl.glEnd(); // draw trunk
+        gl.glEnd();
 
-        gl.glColor3f(0.0f, 0.6f, 0.0f);
-        drawCircle(gl, offsetX, 0.0f, 0.2f);
-        drawCircle(gl, offsetX, 0.2f, 0.17f);
-        drawCircle(gl, offsetX, 0.37f, 0.15f);
+        // draw crown (aligned with trunk top)
+        drawTriangle3D(gl, offsetX, -0.2f, 0.4f); // bottom layer
+        drawTriangle3D(gl, offsetX, 0.05f, 0.3f); // middle layer
+        drawTriangle3D(gl, offsetX, 0.25f, 0.25f); // top layer
     }
 
-    private void drawCircle(GL2 gl, float cx, float cy, float r) {
-        int numSegments = 100;
-        gl.glBegin(GL2.GL_TRIANGLE_FAN);
-        gl.glVertex2f(cx, cy);
-        for (int i = 0; i <= numSegments; i++) {
-            double angle = 2 * Math.PI * i / numSegments;
-            float x = (float)(cx + r * Math.cos(angle));
-            float y = (float)(cy + r * Math.sin(angle));
-            gl.glVertex2f(x, y);
-        }
-        gl.glEnd(); // draw circle
+    private void drawTriangle3D(GL2 gl, float centerX, float baseY, float height) {
+        float halfWidth = 0.3f;
+
+        // left side (dark green)
+        gl.glColor3f(0.0f, 0.45f, 0.0f);
+        gl.glBegin(GL2.GL_TRIANGLES);
+        gl.glVertex2f(centerX - halfWidth, baseY);
+        gl.glVertex2f(centerX, baseY + height);
+        gl.glVertex2f(centerX, baseY);
+        gl.glEnd();
+
+        // right side (light green)
+        gl.glColor3f(0.0f, 0.7f, 0.0f);
+        gl.glBegin(GL2.GL_TRIANGLES);
+        gl.glVertex2f(centerX, baseY);
+        gl.glVertex2f(centerX + halfWidth, baseY);
+        gl.glVertex2f(centerX, baseY + height);
+        gl.glEnd();
     }
 
     @Override
